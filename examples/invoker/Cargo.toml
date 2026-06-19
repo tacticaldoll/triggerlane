@@ -1,0 +1,19 @@
+# Reference Worklane consumer (a worker), kept as an example outside the
+# trigger-plane product. It exercises the `worklane-core` reservation lifecycle.
+[package]
+name = "triggerlane-invoker-example"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+async-trait.workspace = true
+http-body-util.workspace = true
+hyper.workspace = true
+hyper-util.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+worklane-core.workspace = true
+
+[dev-dependencies]
+worklane-memory.workspace = true

@@ -1,0 +1,20 @@
+/target/
+/.agent/
+/.codex/
+/.claude/
+/.cursor/
+/.github/copilot-instructions.md
+*.rs.bk
+# Local environment file (copy from .env.example); never commit real endpoints.
+/.env
+# Editor/tool temp snapshots, e.g. lib.rs.tmp.<pid>.<hash>
+*.tmp
+*.tmp.*
+
+# Durable stores the binary creates by default (override paths via env)
+/triggerlane-events.jsonl
+/triggerlane-events.jsonl.delivered
+/triggerlane-jobs.sqlite3
+/triggerlane-dead-triggers.jsonl
+# Transient compaction temp written next to a store during prune/retention
+*.compact

@@ -1,0 +1,43 @@
+# cargo-deny configuration — supply-chain gate for the triggerlane workspace.
+# Run locally with `just audit` (needs `cargo install cargo-deny`); CI runs it on
+# every push/PR via the `deny` job in .github/workflows/rust.yml.
+
+[advisories]
+# Schema v2: every advisory in the RustSec database is denied by default. Add an
+# entry to `ignore` (with a justification) only for an advisory we have
+# consciously accepted. Empty is the goal — keep it that way.
+version = 2
+ignore = []
+
+[licenses]
+# Only OSI-permissive licenses compatible with the workspace's own
+# `MIT OR Apache-2.0`, and only those actually present in the current tree, so a
+# dependency introducing a new/unvetted license fails the gate and gets a
+# conscious review.
+version = 2
+allow = [
+    "MIT",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "BSL-1.0",
+    "Unicode-3.0",
+    "Zlib",
+]
+confidence-threshold = 0.8
+
+[bans]
+# Duplicate major versions are a warning (transitive churn we don't fully
+# control), not a hard failure.
+multiple-versions = "warn"
+# A wildcard `*` version requirement is forbidden — it makes builds
+# non-reproducible. (Workspace path deps carry an explicit `version` so they are
+# not wildcards; see the root Cargo.toml.)
+wildcards = "deny"
+
+[sources]
+# Dependencies must come from crates.io; an unknown registry or git source is a
+# supply-chain red flag.
+unknown-registry = "deny"
+unknown-git = "deny"

@@ -1,0 +1,37 @@
+# Local Postgres + Redis for running Triggerlane against a network Worklane broker
+# (`--broker postgres|redis`) instead of the embedded SQLite default. The
+# credentials are NON-SECRET — a throwaway database reachable only on localhost — so
+# they are intentionally inline. Only the HOST ports are shifted (55432/56379, not
+# the defaults 5432/6379) so this never collides with a Postgres/Redis you already
+# run locally.
+#
+#   just up                 # start these and wait until healthy
+#   just serve-postgres     # serve against the Postgres broker
+#
+# A Worklane worker must run against the same broker to execute the submitted jobs;
+# Triggerlane only enqueues. Redis MUST run with key eviction disabled
+# (`maxmemory-policy noeviction`) or the broker store can corrupt.
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: triggerlane
+      POSTGRES_PASSWORD: triggerlane
+      POSTGRES_DB: triggerlane
+    ports:
+      - "55432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U triggerlane"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+  redis:
+    image: redis:7
+    command: ["redis-server", "--maxmemory-policy", "noeviction"]
+    ports:
+      - "56379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 15

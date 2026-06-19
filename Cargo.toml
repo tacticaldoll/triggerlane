@@ -1,0 +1,63 @@
+[workspace]
+resolver = "2"
+exclude = ["worklane"]
+members = [
+    "crates/triggerlane-core",
+    "crates/triggerlane-runtime",
+    "crates/triggerlane-http",
+    "crates/triggerlane-storage",
+    "crates/triggerlane-cli",
+    "examples",
+    "examples/invoker",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+
+[workspace.dependencies]
+clap = { version = "4", features = ["derive", "env"] }
+fs2 = "0.4"
+async-trait = "0.1"
+axum = "0.8"
+bytes = { version = "1", features = ["serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+hex = "0.4"
+hmac = "0.12"
+http-body-util = "0.1"
+hyper = { version = "1", features = ["client", "http1"] }
+hyper-util = { version = "0.1", features = ["client-legacy", "http1", "tokio"] }
+metrics = "0.24"
+metrics-exporter-prometheus = { version = "0.18", default-features = false }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+thiserror = "2"
+tokio = { version = "1", features = ["io-util", "macros", "process", "rt-multi-thread", "sync", "time"] }
+tower = { version = "0.5", features = ["util"] }
+tower-http = { version = "0.6", features = ["trace", "timeout"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+uuid = { version = "1", features = ["serde", "v4"] }
+
+# Worklane dependencies are centralized here so every member crate uses the
+# same submodule-pinned revision through `*.workspace = true`.
+worklane-core = { path = "worklane/crates/worklane-core", version = "0.1.0" }
+worklane-memory = { path = "worklane/crates/worklane-memory", version = "0.1.0" }
+worklane-sqlite = { path = "worklane/crates/worklane-sqlite", version = "0.1.0" }
+worklane-postgres = { path = "worklane/crates/worklane-postgres", version = "0.1.0" }
+worklane-redis = { path = "worklane/crates/worklane-redis", version = "0.1.0" }
+
+triggerlane-core = { path = "crates/triggerlane-core", version = "0.1.0" }
+triggerlane-runtime = { path = "crates/triggerlane-runtime", version = "0.1.0" }
+triggerlane-http = { path = "crates/triggerlane-http", version = "0.1.0" }
+triggerlane-storage = { path = "crates/triggerlane-storage", version = "0.1.0" }
+
+[workspace.metadata.triggerlane.worklane]
+source = "git-submodule"
+path = "worklane"
+pinning = "repository-recorded-submodule-commit"
+contract_crates = ["worklane-core"]
+broker_implementation_crates = ["worklane-memory", "worklane-sqlite"]
+broker_implementation_scope = "worklane-memory in tests/examples; worklane-sqlite is the shipped durable default at the CLI broker seam"

@@ -1,0 +1,23 @@
+{
+  "triggers": [
+    {
+      "name": "github-issue-projection",
+      "priority": 10,
+      "enabled": true,
+      "match": { "type": "event_type", "event_type": "event.github.issue.created" },
+      "bind": { "lane": "projection", "kind": "CreateProjectionJob", "max_attempts": 3 }
+    },
+    {
+      "name": "bug-issue-triage",
+      "priority": 20,
+      "match": {
+        "type": "all_of",
+        "conditions": [
+          { "type": "event_type", "event_type": "event.github.issue.created" },
+          { "type": "payload_field_equals", "pointer": "/label", "value": "bug" }
+        ]
+      },
+      "bind": { "lane": "triage", "kind": "TriageBugJob", "max_attempts": 5 }
+    }
+  ]
+}
